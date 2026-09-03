@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bear Voice Clone UI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&family=Roboto:wght@400;500;700&display=swap');
+
+        :root {
+            --bg-color: #12141c;
+            --neon-orange: #ff9d00;
+            --neon-glow: 0 0 12px #ff9d00;
+            --box-bg: rgba(255, 157, 0, 0.05);
+            --box-border: rgba(255, 157, 0, 0.25);
+            --text-gray: #a0a0a0;
+            --success-green: #00ff88;
+            --error-red: #ff4444;
+        }
+
+        body {
+            background-color: #0b0c10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px 0;
+            font-family: 'Roboto', 'Padauk', sans-serif;
+        }
+
+        .app-container {
+            position: relative;
+            width: 380px;
+            background-color: var(--bg-color);
+            border: 3px solid var(--neon-orange);
+            border-radius: 35px;
+            box-shadow: 0 0 15px rgba(255, 157, 0, 0.3);
+            padding: 40px 20px 25px;
+            box-sizing: border-box;
+        }
+
+        .logo-wrapper {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #0b0c10;
+            padding: 0 15px;
+        }
+
+        .bear-icon {
+            width: 55px;
+            height: 55px;
+            border: 2px solid var(--neon-orange);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            background-color: var(--bg-color);
+            box-shadow: 0 0 10px rgba(255, 157, 0, 0.4);
+        }
+
+        .main-title {
+            color: var(--neon-orange);
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .api-key-box {
+            background: rgba(255, 157, 0, 0.08);
+            border: 1px solid var(--neon-orange);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .api-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .api-key-box label {
+            color: var(--neon-orange);
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .get-key-link {
+            color: var(--success-green);
+            font-size: 11px;
+            font-weight: bold;
+            text-decoration: none;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--success-green);
+            padding: 2px 6px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .get-key-link:hover {
+            background: var(--success-green);
+            color: black;
+        }
+
+        .api-input-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .api-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .api-key-box input {
+            width: 100%;
+            background: #0b0c10;
+            border: 1px solid var(--box-border);
+            color: white;
+            padding: 7px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .key-status {
+            font-size: 10px;
+            padding-left: 4px;
+            min-height: 14px;
+        }
+
+        .section-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 157, 0, 0.15);
+            border-radius: 15px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            color: var(--neon-orange);
+            font-size: 13px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .voice-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .voice-btn {
+            background-color: var(--box-bg);
+            border: 1px solid var(--box-border);
+            border-radius: 12px;
+            padding: 10px 6px;
+            color: var(--text-gray);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .voice-btn.active {
+            border: 2px solid var(--neon-orange) !important;
+            background-color: rgba(255, 157, 0, 0.2) !important;
+            box-shadow: var(--neon-glow);
+            color: white !important;
+        }
+
+        .select-badge {
+            display: none;
+            font-size: 9px;
+            background: var(--neon-orange);
+            color: black;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .voice-btn.active .select-badge {
+            display: inline-block;
+        }
+
+        .status-badge {
+            font-size: 10px;
+            color: var(--text-gray);
+        }
+
+        .voice-btn.has-file .status-badge {
+            color: var(--success-green);
+            font-weight: bold;
+        }
+
+        .play-ref-btn {
+            background: #00ff88;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            padding: 3px 8px;
+            font-size: 9px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .text-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .text-actions button {
+            background-color: var(--box-bg);
+            border: 1px solid var(--box-border);
+            color: var(--neon-orange);
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            background-color: var(--box-bg);
+            border: 1px solid var(--box-border);
+            border-radius: 12px;
+            padding: 10px;
+            color: white;
+            font-size: 13px;
+            font-family: 'Padauk', sans-serif;
+            resize: none;
+            box-sizing: border-box;
+        }
+
+        .char-count {
+            text-align: right;
+            color: var(--neon-orange);
+            font-size: 11px;
+            margin-top: 4px;
+            margin-bottom: 12px;
+        }
+
+        .generate-btn {
+            width: 100%;
+            background: linear-gradient(180deg, rgba(255,157,0,0.3) 0%, rgba(255,157,0,0.1) 100%);
+            border: 1px solid var(--neon-orange);
+            color: var(--neon-orange);
+            font-size: 15px;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 10px rgba(255, 157, 0, 0.2);
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 12px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="logo-wrapper">
+            <div class="bear-icon">🐻</div>
+        </div>
+
+        <div class="main-title">Bear Voice Clone</div>
+
+        <div class="api-key-box">
+            <div class="api-header-row">
+                <label><i class="fa-solid fa-key"></i> ElevenLabs API Keys:</label>
+                <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" class="get-key-link">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> API Key ယူရန်
+                </a>
+            </div>
+            <div class="api-input-list">
+                <div class="api-input-group">
+                    <input type="password" id="api-key-1" placeholder="API Key 1 (အဓိက)" onchange="checkApiKey(1)" oninput="saveApiKeys(1)">
+                    <span class="key-status" id="key-status-1"></span>
+                </div>
+                <div class="api-input-group">
+                    <input type="password" id="api-key-2" placeholder="API Key 2 (အပို)" onchange="checkApiKey(2)" oninput="saveApiKeys(2)">
+                    <span class="key-status" id="key-status-2"></span>
+                </div>
+                <div class="api-input-group">
+                    <input type="password" id="api-key-3" placeholder="API Key 3 (အပို)" onchange="checkApiKey(3)" oninput="saveApiKeys(3)">
+                    <span class="key-status" id="key-status-3"></span>
+                </div>
+            </div>
+        </div>
+
+        <input type="file" id="slot-file-input" accept="audio/*" style="display:none;">
+
+        <div class="section-box">
+            <div class="section-title"><i class="fa-solid fa-microphone"></i> ၁။ ပုံမှန်အသံများ ရွေးရန်</div>
+            <div class="voice-grid">
+                <button class="voice-btn active" id="btn-kyaw" onclick="selectVoice('kyaw_kyaw')">
+                    <span class="select-badge">✓ ရွေးထားသည်</span>
+                    <i class="fa-solid fa-user-tie fa-lg"></i>
+                    <span>ကျော်ကျော်</span>
+                    <span class="status-badge">Default</span>
+                </button>
+
+                <button class="voice-btn" id="btn-mya" onclick="selectVoice('mya_mya')">
+                    <span class="select-badge">✓ ရွေးထားသည်</span>
+                    <i class="fa-solid fa-user fa-lg"></i>
+                    <span>မြမြ</span>
+                    <span class="status-badge">Default</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="section-box">
+            <div class="section-title"><i class="fa-solid fa-wand-magic-sparkles"></i> ၂။ Voice Clone (၅ ခု) ရွေးရန်</div>
+            <div class="voice-grid">
+                <button class="voice-btn" id="btn-clone1" onclick="handleSlotClick('clone1')">
+                    <span class="select-badge">✓ ရွေးထားသည်</span>
+                    <span>Voice Clone 1</span>
+                    <span class="status-badge" id="badge-clone1">📁 Empty</span>
+                    <span class="play-ref-btn" id="playbtn-clone1" onclick="playSampleAudio(event, 'clone1')">▶️ စမ်းနားထောင်မည်</span>
+                </button>
+
+                <button class="voice-btn" id="btn-clone2" onclick="handleSlotClick('clone2')">
+                    <span class="select-badge">✓ ရွေးထားသည်</span>
+                    <span>Voice Clone 2</span>
+                    <span class="status-badge" id="badge-clone2">📁 Empty</span>
+                    <span class="play-ref-btn" id="playbtn-clone2" onclick="playSampleAudio(event, 'clone2')">▶️ စမ်းနားထောင်မည်</span>
+                </button>
+
+                <button class="voice-btn" id="btn-clone3" onclick="handleSlotClick('clone3')">
+                    <span class="select-badge">✓ ရွေးထားသည်</span>
+                    <span>Voice Clone 3</span>
+                    <span class="status-badge" id="badge-clone3">📁 Empty</span>
+                    <span class="play-ref-btn" id="playbtn-clone3" onclick="playSampleAudio(event, 'clone3')">▶️ စမ်းနားထောင်မည်</span>
+                </button>
+
+                <button class="voice-btn" id="btn-clone4" onclick="handleSlotClick('clone4')">
+                    <span class="select-badge">✓ ရွေးထားသည်</span>
+                    <span>Voice Clone 4</span>
+                    <span class="status-badge" id="badge-clone4">📁 Empty</span>
+                    <span class="play-ref-btn" id="playbtn-clone4" onclick="playSampleAudio(event, 'clone4')">▶️ စမ်းနားထောင်မည်</span>
+                </button>
+
+                <button class="voice-btn" id="btn-clone5" onclick="handleSlotClick('clone5')" style="grid-column: span 2;">
+                    <span class="select-badge">✓ ရွေးထားသည်</span>
+                    <span>Voice Clone 5</span>
+                    <span class="status-badge" id="badge-clone5">📁 Empty</span>
+                    <span class="play-ref-btn" id="playbtn-clone5" onclick="playSampleAudio(event, 'clone5')">▶️ စမ်းနားထောင်မည်</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="text-header-row">
+            <div class="section-title" style="margin-bottom: 0;">စာသားရေးထည့်ရန်</div>
+            <div class="text-actions">
+                <button onclick="pasteText()">ကူးထည့်မယ်</button>
+                <button onclick="clearText()">ဖျက်မယ်</button>
+            </div>
+        </div>
+        <textarea id="input-text" maxlength="10000" placeholder="စာသားရေးထည့်ပါ (အများဆုံး ၁၀,၀၀၀ စာလုံး)..." oninput="updateCharCount()"></textarea>
+        <div class="char-count" id="char-count">စာလုံးရေ: 0 / 10000</div>
+
+        <button class="generate-btn" onclick="generateAudio()">
+            <i class="fa-solid fa-circle-play"></i> GENERATE
+        </button>
+
+        <audio id="audio-player" controls></audio>
+    </div>
+
+    <script>
+        let selectedVoice = "kyaw_kyaw";
+        let targetSlotForUpload = null;
+        const bgAudioPlayer = new Audio();
+
+        const cloneUploadedNames = { clone1: null, clone2: null, clone3: null, clone4: null, clone5: null };
+
+        window.onload = () => {
+            for (let i = 1; i <= 3; i++) {
+                const savedKey = localStorage.getItem(`eleven_key_${i}`) || '';
+                const inputEl = document.getElementById(`api-key-${i}`);
+                inputEl.value = savedKey;
+                if (savedKey) {
+                    checkApiKey(i);
+                }
+            }
+        };
+
+        function saveApiKeys(index) {
+            const val = document.getElementById(`api-key-${index}`).value.trim();
+            localStorage.setItem(`eleven_key_${index}`, val);
+            if (!val) {
+                document.getElementById(`key-status-${index}`).innerHTML = '';
+            }
+        }
+
+        async function checkApiKey(index) {
+            const keyInput = document.getElementById(`api-key-${index}`);
+            const statusSpan = document.getElementById(`key-status-${index}`);
+            const key = keyInput.value.trim();
+
+            if (!key) {
+                statusSpan.innerHTML = '';
+                return;
+            }
+
+            statusSpan.innerHTML = '<span style="color: #ff9d00;">⏳ စစ်ဆေးနေသည်...</span>';
+
+            const formData = new FormData();
+            formData.append('api_key', key);
+
+            try {
+                const res = await fetch('/api/check_key', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.valid) {
+                    statusSpan.innerHTML = `<span style="color: #00ff88; font-weight: bold;">🟢 အသုံးပြုနိုင်သည် (ကျန် စာလုံးရေ: ${data.remaining.toLocaleString()})</span>`;
+                } else {
+                    statusSpan.innerHTML = '<span style="color: #ff4444; font-weight: bold;">🔴 API Key မှားယွင်းနေပါသည် သို့မဟုတ် သက်တမ်းကုန်နေပါသည်</span>';
+                }
+            } catch (err) {
+                statusSpan.innerHTML = '<span style="color: #ff4444;">🔴 စစ်ဆေး၍မရပါ (Network Error)</span>';
+            }
+        }
+
+        function getApiKeysCombined() {
+            const k1 = document.getElementById('api-key-1').value.trim();
+            const k2 = document.getElementById('api-key-2').value.trim();
+            const k3 = document.getElementById('api-key-3').value.trim();
+
+            const keys = [k1, k2, k3].filter(k => k !== '');
+            return keys.join(',');
+        }
+
+        const fileInput = document.getElementById('slot-file-input');
+
+        fileInput.addEventListener('change', async (e) => {
+            const apiKeys = getApiKeysCombined();
+            if (!apiKeys) {
+                alert('အနည်းဆုံး API Key ၁ ခု ထည့်သွင်းပါ');
+                return;
+            }
+
+            if (e.target.files.length > 0 && targetSlotForUpload) {
+                const file = e.target.files[0];
+                const slotKey = targetSlotForUpload;
+
+                const formData = new FormData();
+                formData.append('slot', slotKey);
+                formData.append('voice_file', file);
+                formData.append('api_keys', apiKeys);
+
+                try {
+                    const res = await fetch('/api/upload_slot', { method: 'POST', body: formData });
+                    const data = await res.json();
+
+                    if (data.success) {
+                        cloneUploadedNames[slotKey] = data.filename;
+
+                        const badge = document.getElementById(`badge-${slotKey}`);
+                        const btn = document.getElementById(`btn-${slotKey}`);
+                        const playBtn = document.getElementById(`playbtn-${slotKey}`);
+
+                        badge.innerText = `✅ File Ready`;
+                        btn.classList.add('has-file');
+                        playBtn.style.display = 'inline-block';
+
+                        selectVoice(slotKey);
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                } catch (err) {
+                    alert('ဖိုင် Upload မအောင်မြင်ပါ');
+                }
+            }
+        });
+
+        function handleSlotClick(slotKey) {
+            selectVoice(slotKey);
+            if (!cloneUploadedNames[slotKey]) {
+                targetSlotForUpload = slotKey;
+                fileInput.click();
+            }
+        }
+
+        async function playSampleAudio(event, slotKey) {
+            event.stopPropagation();
+            const apiKeys = getApiKeysCombined();
+            if (!apiKeys) {
+                alert('အနည်းဆုံး API Key ၁ ခု ထည့်သွင်းပါ');
+                return;
+            }
+
+            const btn = document.getElementById(`playbtn-${slotKey}`);
+            const originalText = btn.innerText;
+            btn.innerText = '⏳ ဖွင့်နေသည်...';
+
+            const formData = new FormData();
+            formData.append('text', 'မင်္ဂလာပါ၊ ဒါကတော့ သင်ရွေးချယ်ထားသော Voice Clone စမ်းသပ်မှု အသံဖြစ်ပါတယ်။');
+            formData.append('voice', slotKey);
+            formData.append('api_keys', apiKeys);
+
+            try {
+                const response = await fetch('/api/generate', { method: 'POST', body: formData });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    bgAudioPlayer.src = URL.createObjectURL(blob);
+                    bgAudioPlayer.play();
+                } else {
+                    const err = await response.json();
+                    alert('Error: ' + err.error);
+                }
+            } catch (err) {
+                alert('အသံဖွင့်ရန် အဆင်မပြေပါ');
+            } finally {
+                btn.innerText = originalText;
+            }
+        }
+
+        function selectVoice(voice) {
+            selectedVoice = voice;
+            document.querySelectorAll('.voice-btn').forEach(btn => btn.classList.remove('active'));
+
+            if (voice === 'kyaw_kyaw') document.getElementById('btn-kyaw').classList.add('active');
+            else if (voice === 'mya_mya') documeent.getElementById('btn-mya').classList.add('active');
+            else {
+                const activeBtn = document.getElementById(`btn-${voice}`);
+                if (activeBtn) activeBtn.classList.add('active');
+            }
+        }
+
+        function updateCharCount() {
+            const text = document.getElementById('input-text').value;
+            document.getElementById('char-count').innerText = `စာလုံးရေ: ${text.length} / 10000`;
+        }
+
+        function clearText() {
+            document.getElementById('input-text').value = '';
+            updateCharCount();
+        }
+
+        async function pasteText() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('input-text').value = text.substring(0, 10000);
+                updateCharCount();
+            } catch (err) {
+                alert('Clipboard ဖတ်ခွင့် ပေးပါ။');
+            }
+        }
+
+        async function generateAudio() {
+            const text = document.getElementById('input-text').value;
+            const apiKeys = getApiKeysCombined();
+
+            if (!apiKeys) {
+                alert('အနည်းဆုံး API Key ၁ ခု ထည့်သွင်းပါ');
+                return;
+            }
+
+            if (!text.trim()) {
+                alert('စာသား ရေးထည့်ပါ');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('text', text);
+            formData.append('voice', selectedVoice);
+            formData.append('api_keys', apiKeys);
+
+            const genBtn = document.querySelector('.generate-btn');
+            genBtn.innerText = 'GENERATING...';
+
+            try {
+                const response = await fetch('/api/generate', { method: 'POST', body: formData });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const audioUrl = URL.createObjectURL(blob);
+                    const player = document.getElementById('audio-player');
+                    player.src = audioUrl;
+                    player.style.display = 'block';
+                    player.play();
+                } else {
+                    const err = await response.json();
+                    alert('Error: ' + err.error);
+                }
+            } catch (err) {
+                alert('Server ချိတ်ဆက်မှု မရရှိပါ');
+            } finally {
+                genBtn.innerHTML = '<i class="fa-solid fa-circle-play"></i> GENERATE';
+            }
+        }
+    </script>
+</body>
+</html>
